@@ -148,7 +148,7 @@
           const profile = await liff.getProfile();
           globalUserid = profile.userId;
         }
-        const uri = "https://1s1gjx3t-3001.asse.devtunnels.ms/";
+        const uri = "https://1s1gjx3t-3001.asse.devtunnels.ms";
         const response = await fetch(`${uri}/api/v1/sendflexmessage/${globalUserid}`, {
           method: "POST",
           headers: {
