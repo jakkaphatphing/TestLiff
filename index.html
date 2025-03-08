@@ -1,10 +1,12 @@
 <html>
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0,viewport-fit=cover">
   <title>My LIFF App</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
   <p id="os"><b>OS:</b> </p>
   <p id="language"><b>Language:</b> </p>
@@ -34,6 +36,7 @@
   <button id="btnScanCode" onclick="scanCode()">Scan Code</button>
   <button id="btnLogOut" onclick="logOut()">Log Out</button>
   <button id="btnClose" onclick="closed()">Close</button>
+  <button id="btnMsg" onclick="sendFlexMessage()">Close</button>
 
   <script src="js/vconsole.min.js"></script>
   <script>
@@ -74,7 +77,7 @@
       const result = await liff.scanCode()
       document.getElementById("scanCode").append(result.value)
     }
-    
+
     function openWindow() {
       liff.openWindow({
         url: "https://line.me",
@@ -123,7 +126,7 @@
       document.getElementById("displayName").append(profile.displayName)
       document.getElementById("decodedIDToken").append(liff.getDecodedIDToken().email)
     }
-    
+
     function getEnvironment() {
       document.getElementById("os").append(liff.getOS())
       document.getElementById("language").append(liff.getLanguage())
@@ -139,6 +142,30 @@
       }
     }
 
+    async function sendFlexMessage() {
+      try {
+        if (!globalUserid) {
+          const profile = await liff.getProfile();
+          globalUserid = profile.userId;
+        }
+        const uri = "https://1s1gjx3t-3001.asse.devtunnels.ms/";
+        const response = await fetch(`${uri}/api/v1/sendflexmessage/${globalUserid}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const result = await response.json();
+        console.log("ส่งข้อความความสําเร็จ : ", result);
+        return result;
+      } catch (error) {
+        console.error("เกิดข้อผิดพลาดในการส่งข้อความ : ", error);
+      }
+    }
+
     async function main() {
       liff.ready.then(() => {
         document.getElementById("isLoggedIn").append(liff.isLoggedIn())
@@ -148,6 +175,7 @@
           getContext()
           getFriendship()
           createUniversalLink()
+          sendFlexMessage()
         } else {
           liff.login()
         }
@@ -157,4 +185,5 @@
     main()
   </script>
 </body>
+
 </html>
